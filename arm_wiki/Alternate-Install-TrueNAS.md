@@ -44,6 +44,9 @@ Prior versions of TrueNAS Scale have an issue with GPU Allocation, which Cobia f
    In the **Container Environment Variables** section add the variables `ARM_UID` and `ARM_GID` and set both
    to `568`. This is TrueNAS' default `apps` user/group, which will most likely already have access to your
    directories and files.
+
+   **REMINDER**: if your folder on the host that houses the ARM home folder is owned by root (user:group) you may run into permission issues here, even if apps is included in your ACL for the overaching share. Besure to check ownership of the host paths and ensure that they are owned by `apps:apps` by selecting "System Settings > Shell" and issuing the command `ls -l /mnt/path/to/host/arm/home`. If you need to make changes, issue the command `chown -R apps:apps /mnt/path/to/host/arm/home`. Alternatively, you can amend the ALC ensure apps:apps has permissions by clicking "Apply permissions recursively". 
+
    - **Alternate**:
    Adjust the directory and file permissions to allow read/write access for user and group ID `1000`,
    either by `chown`ing the directories/files, or adding corresponding ACLs.
@@ -88,7 +91,7 @@ Prior versions of TrueNAS Scale have an issue with GPU Allocation, which Cobia f
 
     Assign the required CD, DVD or Blu-ray drives in the system to ARM.
 
-    _needs verification, see PR comments_
+    Navigate to "System Settings > Shell" and issue the command `lsblk | grep rom`. You should see optical drives listed as `/dev/srX`, where X is the number corresponding to your drive. In the **Storage** section, add a "Host Path" as before, however this time type `/dev/srX` replacing the X with the number for your drive. For "Mount Path", add `/dev/sr0` to denote the first drive inside the container.
     
     In the **Workload Details** section under *Security Context*, enable the *Privileged Mode* checkbox.
 
